@@ -12,7 +12,7 @@
     /* ── Responsive scaling ── */
     .book-scene {
       position: absolute;
-      top: max(40px, 6vh) !important;
+      top: var(--book-top-gap, 5vh) !important;
       left: 50%;
       transform: translateX(-50%) scale(var(--book-scale, 1));
       transform-origin: top center;
@@ -247,25 +247,144 @@
     .flipbook-viewport .page {
       width: 820px;
       height: 472px;
+      position: relative;
+      background: white;
       background-color: #fff;
       background-repeat: no-repeat;
       background-size: 100% 100%;
       border-radius: 4px 10px 10px 4px;
       overflow: hidden;
+      transform-style: preserve-3d;
+      backface-visibility: hidden;
     }
 
-    /* Subtle paper curve — soft inset shadow along the outer (right) edge
-               gives the illusion of a gentle page bow without distorting content. */
+    /* Glossy lighting only on the triangular turning corner. */
     .flipbook-viewport .page::before {
       content: "";
       position: absolute;
-      inset: 0;
+      width: 172px;
+      height: 172px;
       pointer-events: none;
-      border-radius: inherit;
-      box-shadow:
-        inset -14px 0 22px -14px rgba(0, 0, 0, 0.22),
-        inset 6px 0 12px -8px rgba(0, 0, 0, 0.10);
-      z-index: 50;
+      z-index: 999;
+      opacity: 0;
+      background:
+        radial-gradient(circle at var(--flip-corner-x, 100%) var(--flip-corner-y, 100%),
+          rgba(255, 255, 255, .98) 0%,
+          rgba(255, 249, 178, .62) 28%,
+          rgba(255, 255, 255, .34) 50%,
+          rgba(255, 255, 255, 0) 72%),
+        linear-gradient(
+          var(--flip-light-angle, 315deg),
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, .35) 34%,
+          rgba(255, 255, 255, .92) 52%,
+          rgba(255, 246, 178, .34) 70%,
+          rgba(255, 255, 255, 0) 100%
+        );
+      filter: blur(1.2px) drop-shadow(0 0 14px rgba(255, 255, 255, .85));
+      mix-blend-mode: screen;
+      transition: opacity .12s ease;
+    }
+
+    .flipbook-viewport .page.flip-highlight::before {
+      opacity: .96;
+      animation: cornerTurnGlow .68s ease-out both;
+    }
+
+    /* Soft fold shadow, also clipped to the same triangular corner only. */
+    .flipbook-viewport .page::after {
+      content: "";
+      position: absolute;
+      width: 172px;
+      height: 172px;
+      pointer-events: none;
+      opacity: 0;
+      z-index: 998;
+      background:
+        radial-gradient(circle at var(--flip-corner-x, 100%) var(--flip-corner-y, 100%),
+          rgba(0, 0, 0, .30) 0%,
+          rgba(0, 0, 0, .12) 34%,
+          rgba(0, 0, 0, 0) 74%);
+      transition: opacity .18s ease;
+    }
+
+    .flipbook-viewport .page.flip-shadow::after {
+      opacity: .55;
+    }
+
+    .flipbook-viewport .page.flip-highlight,
+    .flipbook-viewport .page.flip-shadow {
+      --flip-corner-x: 100%;
+      --flip-corner-y: 100%;
+      --flip-light-angle: 315deg;
+      --flip-corner-origin: 100% 100%;
+    }
+
+    .flipbook-viewport .page.flip-right.flip-corner-bottom::before,
+    .flipbook-viewport .page.flip-right.flip-corner-bottom::after {
+      right: 0;
+      bottom: 0;
+      clip-path: polygon(100% 0, 100% 100%, 0 100%);
+    }
+
+    .flipbook-viewport .page.flip-right.flip-corner-top {
+      --flip-corner-y: 0%;
+      --flip-light-angle: 225deg;
+      --flip-corner-origin: 100% 0%;
+    }
+
+    .flipbook-viewport .page.flip-right.flip-corner-top::before,
+    .flipbook-viewport .page.flip-right.flip-corner-top::after {
+      right: 0;
+      top: 0;
+      clip-path: polygon(0 0, 100% 0, 100% 100%);
+    }
+
+    .flipbook-viewport .page.flip-left.flip-corner-bottom {
+      --flip-corner-x: 0%;
+      --flip-light-angle: 45deg;
+      --flip-corner-origin: 0% 100%;
+    }
+
+    .flipbook-viewport .page.flip-left.flip-corner-bottom::before,
+    .flipbook-viewport .page.flip-left.flip-corner-bottom::after {
+      left: 0;
+      bottom: 0;
+      clip-path: polygon(0 0, 100% 100%, 0 100%);
+    }
+
+    .flipbook-viewport .page.flip-left.flip-corner-top {
+      --flip-corner-x: 0%;
+      --flip-corner-y: 0%;
+      --flip-light-angle: 135deg;
+      --flip-corner-origin: 0% 0%;
+    }
+
+    .flipbook-viewport .page.flip-left.flip-corner-top::before,
+    .flipbook-viewport .page.flip-left.flip-corner-top::after {
+      left: 0;
+      top: 0;
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    @keyframes cornerTurnGlow {
+      0% {
+        opacity: .98;
+        transform: scale(.72);
+        transform-origin: var(--flip-corner-origin, 100% 100%);
+      }
+
+      55% {
+        opacity: .98;
+        transform: scale(1);
+        transform-origin: var(--flip-corner-origin, 100% 100%);
+      }
+
+      100% {
+        opacity: .45;
+        transform: scale(.9);
+        transform-origin: var(--flip-corner-origin, 100% 100%);
+      }
     }
 
     /* Make the back face of a turning page mirror the same artwork (no white/purple flash).
@@ -286,7 +405,11 @@
     }
 
     .flipbook .page {
-      box-shadow: 0 2px 6px rgba(0, 0, 0, .12), 0 0 22px rgba(0, 0, 0, .18)
+      box-shadow:
+        0 2px 6px rgba(0, 0, 0, .12),
+        0 0 22px rgba(0, 0, 0, .18),
+        inset -14px 0 22px -14px rgba(0, 0, 0, 0.22),
+        inset 6px 0 12px -8px rgba(0, 0, 0, 0.10);
     }
 
     .flipbook-viewport .shadow {
@@ -1596,7 +1719,7 @@
     <div class="book-cover-wrap">
       <div class="flipbook-viewport" style="position:relative">
         <div class="container">
-          <div id="flipbook" dir="ltr"><!-- pages injected by JS --></div>
+          <div id="flipbook" class="flipbook" dir="ltr"><!-- pages injected by JS --></div>
         </div>
         <!-- Overlay: text & bubbles sit above ALL turn.js pages, no clipping -->
         <div id="storyOverlay"></div>
@@ -5252,24 +5375,30 @@
     applyTheme(ACTIVE_THEME);
 
     /* ── Responsive book scaling ──
-       Book intrinsic size ≈ 848 wide × ~520 tall (cover + page-stack).
-       Scale up on big screens, down on small ones, with sensible padding. */
+       Keep turn.js at its intrinsic size, then scale the whole scene to fit
+       inside the visible viewport with breathing room on every screen. */
     function updateBookScale() {
       var BOOK_W = 852;   /* a bit beyond 830 to include shadows */
       var BOOK_H = 490;   /* flipbook 472px + small shadow margin, no page-stack */
-      var pad = 16;
-      var vw = window.innerWidth;
-      var vh = window.innerHeight;
-      var sx = (vw - pad) / BOOK_W;
-      var sy = (vh - pad) / BOOK_H;
+      var MIN_SCALE = 0.30;
+      var MAX_SCALE = 1.62;
+      var viewport = window.visualViewport || window;
+      var vw = viewport.width || window.innerWidth;
+      var vh = viewport.height || window.innerHeight;
+      var hPad = Math.min(96, Math.max(32, vw * 0.05));
+      var topGap = Math.min(72, Math.max(24, vh * 0.055));
+      var bottomGap = Math.min(72, Math.max(24, vh * 0.055));
+      var sx = (vw - hPad * 2) / BOOK_W;
+      var sy = (vh - topGap - bottomGap) / BOOK_H;
       var scale = Math.min(sx, sy);
-      /* Allow growth up to 1.8× on huge displays, shrink as needed on phones */
-      scale = Math.max(0.32, Math.min(scale, 1.8));
+      scale = Math.max(MIN_SCALE, Math.min(scale, MAX_SCALE));
       document.documentElement.style.setProperty('--book-scale', scale.toFixed(3));
+      document.documentElement.style.setProperty('--book-top-gap', Math.round(topGap) + 'px');
     }
     updateBookScale();
     window.addEventListener('resize', updateBookScale);
     window.addEventListener('orientationchange', updateBookScale);
+    if (window.visualViewport) window.visualViewport.addEventListener('resize', updateBookScale);
 
     var Q1_HTML = `
       <div id="q1s" class="quiz-scene is-question" data-state="question">
@@ -6336,6 +6465,34 @@
             }
           }
         }
+      });
+
+      var book = $('#flipbook');
+      var flipLightClasses = 'flip-highlight flip-left flip-right flip-shadow flip-corner-top flip-corner-bottom';
+
+      book.bind('start', function (event, pageObject, corner) {
+        $('.page').removeClass(flipLightClasses);
+
+        var view = book.turn('view');
+        var cornerName = corner || 'br';
+        var isLeftTurn = cornerName === 'l' || /l$/.test(cornerName);
+        var isTopCorner = /^t/.test(cornerName);
+        var turnClass = isLeftTurn ? 'flip-left' : 'flip-right';
+        var cornerClass = isTopCorner ? 'flip-corner-top' : 'flip-corner-bottom';
+
+        $.each(view, function (_, pageNum) {
+          var pageEl = $('.page-wrapper[page="' + pageNum + '"] .page');
+          if (!pageEl.length) return;
+          pageEl.addClass('flip-highlight flip-shadow ' + turnClass + ' ' + cornerClass);
+        });
+
+        $(event.target)
+          .closest('.page')
+          .addClass('flip-highlight flip-shadow ' + turnClass + ' ' + cornerClass);
+      });
+
+      book.bind('turned end', function () {
+        $('.page').removeClass(flipLightClasses);
       });
 
       /* Corner-peel page-turn hint — inactivity-based, from reference implementation */
