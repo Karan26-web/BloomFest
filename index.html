@@ -432,7 +432,7 @@
       object-fit: cover;
       object-position: center;
       opacity: 1;
-      transform: translate3d(2.8%, -6.5%, 0) scale(.78);
+      transform: translate3d(-1.8%, -6.5%, 0) scale(.78);
       transform-origin: 50% 13%;
       will-change: transform, opacity, filter;
       animation: none;
@@ -446,34 +446,136 @@
       0% {
         opacity: 1;
         filter: drop-shadow(0 12px 10px rgba(86, 50, 0, .18));
-        transform: translate3d(2.8%, -6.5%, 0) scale(.78);
+        transform: translate3d(-1.8%, -6.5%, 0) scale(.78);
       }
 
       18% {
         opacity: 1;
-        transform: translate3d(2.1%, -8.2%, 0) scale(.7);
+        transform: translate3d(-1.8%, -8.2%, 0) scale(.7);
       }
 
       58% {
         opacity: 1;
         filter: drop-shadow(0 8px 7px rgba(86, 50, 0, .12));
-        transform: translate3d(1.2%, -12.8%, 0) scale(.43);
+        transform: translate3d(-1.8%, -12.8%, 0) scale(.43);
       }
 
       82% {
         opacity: .72;
-        transform: translate3d(.4%, -16.2%, 0) scale(.24);
+        transform: translate3d(-1.8%, -16.2%, 0) scale(.24);
       }
 
       100% {
         opacity: 0;
         filter: drop-shadow(0 0 0 rgba(86, 50, 0, 0));
-        transform: translate3d(.2%, -18.2%, 0) scale(.13);
+        transform: translate3d(-1.8%, -18.2%, 0) scale(.13);
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       .wagon-ride-scene.is-wagon-active .wagon-ride-img {
+        animation-duration: .01ms;
+      }
+    }
+
+    .cart-enter-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .cart-enter-scene.is-cart-active .cart-enter-layer {
+      opacity: 1;
+    }
+
+    .cart-enter-img {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0;
+      transform: translate3d(-92%, 18%, 0) scale(.78) rotate(-.4deg);
+      transform-origin: 50% 50%;
+      will-change: transform, opacity;
+      animation: none;
+    }
+
+    .cart-enter-scene.is-cart-active .cart-enter-img {
+      animation: cartRollIn 5.8s cubic-bezier(.22, .58, .18, 1) forwards;
+    }
+
+    @keyframes cartRollIn {
+      0% {
+        opacity: 0;
+        transform: translate3d(-92%, 18%, 0) scale(.78) rotate(-.4deg);
+      }
+
+      12% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 1;
+        transform: translate3d(-27.5%, 18%, 0) scale(.78) rotate(0deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .cart-enter-scene.is-cart-active .cart-enter-img {
+        animation-duration: .01ms;
+      }
+    }
+
+    .balloon-enter-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .balloon-enter-scene.is-balloon-enter-active .balloon-enter-layer {
+      opacity: 1;
+    }
+
+    .balloon-enter-img {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 1;
+      transform: translate3d(18%, -72%, 0) scale(.68) rotate(.35deg);
+      transform-origin: 50% 50%;
+      will-change: transform;
+      animation: none;
+    }
+
+    .balloon-enter-scene.is-balloon-enter-active .balloon-enter-img {
+      animation: balloonDropIn 6.2s cubic-bezier(.22, .58, .18, 1) forwards;
+    }
+
+    @keyframes balloonDropIn {
+      0% {
+        transform: translate3d(18%, -72%, 0) scale(.68) rotate(.35deg);
+      }
+
+      100% {
+        transform: translate3d(18%, 0, 0) scale(.68) rotate(0deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .balloon-enter-scene.is-balloon-enter-active .balloon-enter-img {
         animation-duration: .01ms;
       }
     }
@@ -491,84 +593,57 @@
       opacity: 1;
     }
 
-    .balloon-float-cleanup {
-      position: absolute;
-      display: block;
-      z-index: 1;
-      pointer-events: none;
-      opacity: .9;
-      filter: blur(10px);
-    }
-
-    .balloon-float-cleanup.castle {
-      left: 31.8%;
-      top: 1.5%;
-      width: 32.5%;
-      height: 38%;
-      border-radius: 48%;
-      background:
-        radial-gradient(ellipse at 52% 22%, rgba(247, 183, 38, .64), rgba(218, 151, 31, .48) 48%, rgba(218, 151, 31, 0) 78%),
-        linear-gradient(90deg, rgba(121, 195, 93, .18), rgba(236, 172, 45, .42) 28%, rgba(239, 177, 47, .46) 68%, rgba(106, 184, 91, .18));
-    }
-
-    .balloon-float-cleanup.path {
-      left: 38.4%;
-      top: 35%;
-      width: 24.2%;
-      height: 28%;
-      border-radius: 46% 46% 35% 35%;
-      background:
-        radial-gradient(ellipse at 50% 38%, rgba(255, 235, 169, .92), rgba(255, 218, 122, .55) 62%, rgba(255, 218, 122, 0) 100%),
-        linear-gradient(180deg, rgba(255, 238, 181, .72), rgba(246, 203, 105, .38));
-      filter: blur(8px);
-    }
-
     .balloon-float-img {
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 1;
       width: 100%;
       height: 100%;
       object-fit: cover;
       object-position: center;
       opacity: 1;
-      transform: translate3d(6.8%, -8.5%, 0) scale(.68) rotate(0deg);
+      transform: translate3d(2.5%, -11.5%, 0) scale(.68) rotate(0deg);
       transform-origin: 50% 42%;
       will-change: transform, opacity, filter;
       animation: none;
     }
 
     .balloon-float-scene.is-balloon-active .balloon-float-img {
-      animation: balloonFloatAway 8.8s cubic-bezier(.22, .02, .18, 1) forwards;
+      animation: balloonFloatAway 13s cubic-bezier(.27, .05, .12, 1) forwards;
     }
 
     @keyframes balloonFloatAway {
       0% {
         opacity: 1;
         filter: drop-shadow(0 14px 12px rgba(75, 48, 0, .14));
-        transform: translate3d(6.8%, -8.5%, 0) scale(.68) rotate(0deg);
+        transform: translate3d(2.5%, -11.5%, 0) scale(.68) rotate(0deg);
       }
 
-      20% {
+      24% {
         opacity: 1;
-        transform: translate3d(5.4%, -12.5%, 0) scale(.61) rotate(-.7deg);
+        transform: translate3d(1.8%, -18.5%, 0) scale(.6) rotate(-.6deg);
       }
 
-      48% {
+      52% {
         opacity: 1;
         filter: drop-shadow(0 9px 8px rgba(75, 48, 0, .1));
-        transform: translate3d(3.2%, -22%, 0) scale(.47) rotate(.8deg);
+        transform: translate3d(.8%, -30%, 0) scale(.46) rotate(.7deg);
       }
 
-      78% {
-        opacity: .78;
-        transform: translate3d(1.1%, -38%, 0) scale(.3) rotate(-.5deg);
+      84% {
+        opacity: 1;
+        transform: translate3d(.2%, -43%, 0) scale(.3) rotate(-.4deg);
+      }
+
+      94% {
+        opacity: 1;
+        transform: translate3d(0, -49%, 0) scale(.22) rotate(.15deg);
       }
 
       100% {
         opacity: 0;
         filter: drop-shadow(0 0 0 rgba(75, 48, 0, 0));
-        transform: translate3d(.1%, -55%, 0) scale(.19) rotate(.3deg);
+        transform: translate3d(0, -54%, 0) scale(.16) rotate(.2deg);
       }
     }
 
@@ -6059,8 +6134,8 @@
         { image: "media/21GogoKnowsTheTrickWeMustSortThem.jpg",              audio: "audios/GogoKnowsTheTrickWeNeedTosortthem.mp3" },
         { image: "media/22SortThemHow.jpg",                                  audio: "audios/SortThemHow.mp3" },
         { image: "media/23UsingtheMagicMoers.jpg",                           audio: "audios/usingTheMagicMovers.mp3" },
-        { image: "media/24HeavierThingsGoIntheredWagon.jpg",                 audio: "audios/HeavierThingsGotoRedWagon.mp3" },
-        { image: "media/25LighterThingsGointheBalloonBAsket.jpg",            audio: "audios/LighterThingsGoesInsideTheBalloonBasket.mp3" },
+        { image: "media/24HeavierThingsGoIntheredWagon.jpg",                 audio: "audios/HeavierThingsGotoRedWagon.mp3", cartEnter: true },
+        { image: "media/25LighterThingsGointheBalloonBAsket.jpg",            audio: "audios/LighterThingsGoesInsideTheBalloonBasket.mp3", balloonEnter: true },
         { image: "media/26IfweEmptyTHeBoxesCanWeCleanThePath.jpg",           audio: "audios/IfweEmptyTheBoxsWeCanClearThePath.mp3" },
         { image: "media/27yesONceaBoxIsEmptypoofZApItAway.jpg",              audio: "audios/Yes! OnceaboxisemptyPOOF!zaitaway.mp3" },
         { image: "media/28LetusOpenThem.jpg",                                audio: "audios/LetusOpenThem.mp3" },
@@ -6124,10 +6199,20 @@
         + '</div>';
     }
 
+    function buildCartEnter() {
+      return '<div class="cart-enter-layer" aria-hidden="true">'
+        + '<img class="cart-enter-img" src="media/Cart.png" alt="">'
+        + '</div>';
+    }
+
+    function buildBalloonEnter() {
+      return '<div class="balloon-enter-layer" aria-hidden="true">'
+        + '<img class="balloon-enter-img" src="media/BalloonEmpty.png" alt="">'
+        + '</div>';
+    }
+
     function buildBalloonFloat() {
       return '<div class="balloon-float-layer" aria-hidden="true">'
-        + '<span class="balloon-float-cleanup castle"></span>'
-        + '<span class="balloon-float-cleanup path"></span>'
         + '<img class="balloon-float-img" src="media/BalloonWithOBjS.png" alt="">'
         + '</div>';
     }
@@ -6226,6 +6311,14 @@
 
         if (page.wagonRide) {
           $p.addClass('wagon-ride-scene').append(buildWagonRide());
+        }
+
+        if (page.cartEnter) {
+          $p.addClass('cart-enter-scene').append(buildCartEnter());
+        }
+
+        if (page.balloonEnter) {
+          $p.addClass('balloon-enter-scene').append(buildBalloonEnter());
         }
 
         if (page.balloonFloat) {
@@ -6388,6 +6481,8 @@
 
     function restartSceneMotion(si) {
       $('.wagon-ride-scene').removeClass('is-wagon-active');
+      $('.cart-enter-scene').removeClass('is-cart-active');
+      $('.balloon-enter-scene').removeClass('is-balloon-enter-active');
       $('.balloon-float-scene').removeClass('is-balloon-active');
       if (si < 0 || si >= TOTAL) return;
       var scene = STORY.pages[si];
@@ -6397,6 +6492,8 @@
       if (!$page.length) return;
       void $page[0].offsetWidth;
       if (scene.wagonRide) $page.addClass('is-wagon-active');
+      if (scene.cartEnter) $page.addClass('is-cart-active');
+      if (scene.balloonEnter) $page.addClass('is-balloon-enter-active');
       if (scene.balloonFloat) $page.addClass('is-balloon-active');
     }
 
@@ -6733,6 +6830,8 @@
             $('.balloon-container').remove();
             $('.confetti-container').remove();
             $('.wagon-ride-scene').removeClass('is-wagon-active');
+            $('.cart-enter-scene').removeClass('is-cart-active');
+            $('.balloon-enter-scene').removeClass('is-balloon-enter-active');
             $('.balloon-float-scene').removeClass('is-balloon-active');
             $('.after-audio-video').removeClass('is-playing');
             /* Stop scene audio on page change */
