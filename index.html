@@ -364,6 +364,202 @@
       }
     }
 
+    .wagon-ride-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .wagon-ride-scene.is-wagon-active .wagon-ride-layer {
+      opacity: 1;
+    }
+
+    .wagon-path-cleanup {
+      position: absolute;
+      display: block;
+      pointer-events: none;
+      z-index: 1;
+      opacity: .9;
+      background:
+        radial-gradient(ellipse at 50% 18%, rgba(255, 241, 177, .9), rgba(255, 224, 135, .56) 62%, rgba(255, 224, 135, 0) 100%),
+        linear-gradient(180deg, rgba(255, 233, 161, .68), rgba(244, 202, 108, .42));
+      filter: blur(8px);
+    }
+
+    .wagon-handle-cleanup {
+      left: 47.1%;
+      top: 8%;
+      width: 4.2%;
+      height: 36%;
+      border-radius: 999px;
+    }
+
+    .wagon-cart-cleanup {
+      left: 34.3%;
+      top: 28%;
+      width: 31.5%;
+      height: 31%;
+      border-radius: 46% 46% 34% 34%;
+    }
+
+    .wagon-ride-img {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
+      transform-origin: 50% 13%;
+      will-change: transform, opacity, filter;
+      animation: none;
+    }
+
+    .wagon-ride-scene.is-wagon-active .wagon-ride-img {
+      animation: wagonPathRide 7.2s cubic-bezier(.38, .02, .28, 1) forwards;
+    }
+
+    @keyframes wagonPathRide {
+      0% {
+        opacity: 1;
+        filter: drop-shadow(0 12px 10px rgba(86, 50, 0, .18));
+        transform: translate3d(0, 0, 0) scale(1);
+      }
+
+      18% {
+        opacity: 1;
+        transform: translate3d(.2%, -1.8%, 0) scale(.92);
+      }
+
+      58% {
+        opacity: 1;
+        filter: drop-shadow(0 8px 7px rgba(86, 50, 0, .12));
+        transform: translate3d(.3%, -7%, 0) scale(.52);
+      }
+
+      82% {
+        opacity: .72;
+        transform: translate3d(.2%, -11%, 0) scale(.28);
+      }
+
+      100% {
+        opacity: 0;
+        filter: drop-shadow(0 0 0 rgba(86, 50, 0, 0));
+        transform: translate3d(.1%, -13%, 0) scale(.16);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .wagon-ride-scene.is-wagon-active .wagon-ride-img {
+        animation-duration: .01ms;
+      }
+    }
+
+    .balloon-float-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 9;
+      overflow: hidden;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .balloon-float-scene.is-balloon-active .balloon-float-layer {
+      opacity: 1;
+    }
+
+    .balloon-float-cleanup {
+      position: absolute;
+      display: block;
+      z-index: 1;
+      pointer-events: none;
+      opacity: .9;
+      filter: blur(10px);
+    }
+
+    .balloon-float-cleanup.castle {
+      left: 31.8%;
+      top: 1.5%;
+      width: 32.5%;
+      height: 38%;
+      border-radius: 48%;
+      background:
+        radial-gradient(ellipse at 52% 22%, rgba(247, 183, 38, .64), rgba(218, 151, 31, .48) 48%, rgba(218, 151, 31, 0) 78%),
+        linear-gradient(90deg, rgba(121, 195, 93, .18), rgba(236, 172, 45, .42) 28%, rgba(239, 177, 47, .46) 68%, rgba(106, 184, 91, .18));
+    }
+
+    .balloon-float-cleanup.path {
+      left: 35.4%;
+      top: 33%;
+      width: 27.5%;
+      height: 32%;
+      border-radius: 46% 46% 35% 35%;
+      background:
+        radial-gradient(ellipse at 50% 38%, rgba(255, 235, 169, .92), rgba(255, 218, 122, .55) 62%, rgba(255, 218, 122, 0) 100%),
+        linear-gradient(180deg, rgba(255, 238, 181, .72), rgba(246, 203, 105, .38));
+      filter: blur(8px);
+    }
+
+    .balloon-float-img {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+      transform-origin: 50% 42%;
+      will-change: transform, opacity, filter;
+      animation: none;
+    }
+
+    .balloon-float-scene.is-balloon-active .balloon-float-img {
+      animation: balloonFloatAway 8.8s cubic-bezier(.22, .02, .18, 1) forwards;
+    }
+
+    @keyframes balloonFloatAway {
+      0% {
+        opacity: 1;
+        filter: drop-shadow(0 14px 12px rgba(75, 48, 0, .14));
+        transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+      }
+
+      20% {
+        opacity: 1;
+        transform: translate3d(-.35%, -4%, 0) scale(.94) rotate(-.7deg);
+      }
+
+      48% {
+        opacity: 1;
+        filter: drop-shadow(0 9px 8px rgba(75, 48, 0, .1));
+        transform: translate3d(.45%, -15%, 0) scale(.76) rotate(.8deg);
+      }
+
+      78% {
+        opacity: .78;
+        transform: translate3d(-.8%, -31%, 0) scale(.52) rotate(-.5deg);
+      }
+
+      100% {
+        opacity: 0;
+        filter: drop-shadow(0 0 0 rgba(75, 48, 0, 0));
+        transform: translate3d(-1.2%, -47%, 0) scale(.34) rotate(.3deg);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .balloon-float-scene.is-balloon-active .balloon-float-img {
+        animation-duration: .01ms;
+      }
+    }
+
     .flipbook-viewport .shadow {
       transition: box-shadow .5s;
       box-shadow: 0 0 20px #bbb
@@ -5853,8 +6049,8 @@
         { image: "media/28LetusOpenThem.jpg",                                audio: "audios/LetusOpenThem.mp3" },
         { image: "media/29Yes!LEtsUsStart.jpg",                              audio: "audios/YesLetUsStart.mp3" },
         { image: "media/30.jpg",                                             audio: "audios/UdidITushortedAllTheItem.mp3" },
-        { image: "media/31TheRedWAgonISTakingTheHeavierThingsINside.jpg",    audio: "audios/heRedWagonTakingTheHeavierThingsInside.mp3" },
-        { image: "media/32AndtheBalloonsBasketIsTakingTheLighterThings.jpg", audio: "audios/AndtheBalloonBasketTakingTheLightestTHings.mp3" },
+        { image: "media/31TheRedWAgonISTakingTheHeavierThingsINside.jpg",    audio: "audios/heRedWagonTakingTheHeavierThingsInside.mp3", wagonRide: true },
+        { image: "media/32AndtheBalloonsBasketIsTakingTheLighterThings.jpg", audio: "audios/AndtheBalloonBasketTakingTheLightestTHings.mp3", balloonFloat: true },
         { image: "media/33WesavedTheBloonFest.jpg",                          audio: "audios/WeSavedTheBloomFest.mp3" },
         { image: "media/34.jpg",                                             audio: "audios/SeeUnextTime.mp3" }
       ]
@@ -5901,6 +6097,22 @@
           + '"></i>';
       });
       return html + '</div>';
+    }
+
+    function buildWagonRide() {
+      return '<div class="wagon-ride-layer" aria-hidden="true">'
+        + '<span class="wagon-path-cleanup wagon-handle-cleanup"></span>'
+        + '<span class="wagon-path-cleanup wagon-cart-cleanup"></span>'
+        + '<img class="wagon-ride-img" src="media/CartWithThings.png" alt="">'
+        + '</div>';
+    }
+
+    function buildBalloonFloat() {
+      return '<div class="balloon-float-layer" aria-hidden="true">'
+        + '<span class="balloon-float-cleanup castle"></span>'
+        + '<span class="balloon-float-cleanup path"></span>'
+        + '<img class="balloon-float-img" src="media/BalloonWithOBjS.png" alt="">'
+        + '</div>';
     }
 
     (function () {
@@ -5980,6 +6192,14 @@
 
         if (page.sparkles) {
           $p.append(buildMagicSparkles());
+        }
+
+        if (page.wagonRide) {
+          $p.addClass('wagon-ride-scene').append(buildWagonRide());
+        }
+
+        if (page.balloonFloat) {
+          $p.addClass('balloon-float-scene').append(buildBalloonFloat());
         }
 
         $fb.append($p);
@@ -6134,6 +6354,20 @@
       var si = Math.max(0, Math.min(p - 2, TOTAL - 1));
       curSpread = si;
       $('#pgCnt').text('');
+    }
+
+    function restartSceneMotion(si) {
+      $('.wagon-ride-scene').removeClass('is-wagon-active');
+      $('.balloon-float-scene').removeClass('is-balloon-active');
+      if (si < 0 || si >= TOTAL) return;
+      var scene = STORY.pages[si];
+      if (!scene) return;
+
+      var $page = $('#flipbook .page[data-si="' + si + '"]');
+      if (!$page.length) return;
+      void $page[0].offsetWidth;
+      if (scene.wagonRide) $page.addClass('is-wagon-active');
+      if (scene.balloonFloat) $page.addClass('is-balloon-active');
     }
 
     /* ── Balloons ── */
@@ -6436,6 +6670,8 @@
             $('.count-page-overlay').remove();
             $('.balloon-container').remove();
             $('.confetti-container').remove();
+            $('.wagon-ride-scene').removeClass('is-wagon-active');
+            $('.balloon-float-scene').removeClass('is-balloon-active');
             /* Stop scene audio on page change */
             if (window.__currentSceneAudio) {
               try { window.__currentSceneAudio.pause(); window.__currentSceneAudio.src = ''; } catch (e) { }
@@ -6455,6 +6691,7 @@
             if (curSpread < 0) return;
             var scene = STORY.pages[curSpread];
             if (!scene) return;
+            restartSceneMotion(curSpread);
             if (scene.video) {
               var vid = $('#flipbook .page[data-si="' + curSpread + '"] video').get(0);
               if (vid) {
