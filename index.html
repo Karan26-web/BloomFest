@@ -395,38 +395,10 @@
       opacity: 1;
     }
 
-    .wagon-path-cleanup {
-      position: absolute;
-      display: block;
-      pointer-events: none;
-      z-index: 1;
-      opacity: .82;
-      background:
-        radial-gradient(ellipse at 50% 18%, rgba(255, 241, 177, .9), rgba(255, 224, 135, .56) 62%, rgba(255, 224, 135, 0) 100%),
-        linear-gradient(180deg, rgba(255, 233, 161, .68), rgba(244, 202, 108, .42));
-      filter: blur(8px);
-    }
-
-    .wagon-handle-cleanup {
-      left: 48.1%;
-      top: 8.5%;
-      width: 3.1%;
-      height: 34%;
-      border-radius: 999px;
-    }
-
-    .wagon-cart-cleanup {
-      left: 38%;
-      top: 30%;
-      width: 27.5%;
-      height: 29%;
-      border-radius: 46% 46% 34% 34%;
-    }
-
     .wagon-ride-img {
       position: absolute;
       inset: 0;
-      z-index: 2;
+      z-index: 1;
       width: 100%;
       height: 100%;
       object-fit: cover;
@@ -602,7 +574,7 @@
       object-fit: cover;
       object-position: center;
       opacity: 1;
-      transform: translate3d(2.5%, -11.5%, 0) scale(.68) rotate(0deg);
+      transform: translate3d(-5%, 1.5%, 0) scale(.58) rotate(0deg);
       transform-origin: 50% 42%;
       will-change: transform, opacity, filter;
       animation: none;
@@ -616,34 +588,34 @@
       0% {
         opacity: 1;
         filter: drop-shadow(0 14px 12px rgba(75, 48, 0, .14));
-        transform: translate3d(2.5%, -11.5%, 0) scale(.68) rotate(0deg);
+        transform: translate3d(-5%, 1.5%, 0) scale(.58) rotate(0deg);
       }
 
       24% {
         opacity: 1;
-        transform: translate3d(1.8%, -18.5%, 0) scale(.6) rotate(-.6deg);
+        transform: translate3d(-3.8%, -7.5%, 0) scale(.5) rotate(-.6deg);
       }
 
       52% {
         opacity: 1;
         filter: drop-shadow(0 9px 8px rgba(75, 48, 0, .1));
-        transform: translate3d(.8%, -30%, 0) scale(.46) rotate(.7deg);
+        transform: translate3d(-2.1%, -19%, 0) scale(.36) rotate(.7deg);
       }
 
       84% {
         opacity: 1;
-        transform: translate3d(.2%, -43%, 0) scale(.3) rotate(-.4deg);
+        transform: translate3d(-.7%, -30%, 0) scale(.24) rotate(-.4deg);
       }
 
       94% {
-        opacity: 1;
-        transform: translate3d(0, -49%, 0) scale(.22) rotate(.15deg);
+        opacity: .68;
+        transform: translate3d(-.2%, -35%, 0) scale(.19) rotate(.15deg);
       }
 
       100% {
         opacity: 0;
         filter: drop-shadow(0 0 0 rgba(75, 48, 0, 0));
-        transform: translate3d(0, -54%, 0) scale(.16) rotate(.2deg);
+        transform: translate3d(0, -39%, 0) scale(.14) rotate(.2deg);
       }
     }
 
@@ -651,6 +623,46 @@
       .balloon-float-scene.is-balloon-active .balloon-float-img {
         animation-duration: .01ms;
       }
+    }
+
+    .scene-instruction-box {
+      position: absolute;
+      left: 28px;
+      top: 28px;
+      width: 338px;
+      height: 158px;
+      z-index: 18;
+      overflow: hidden;
+      pointer-events: none;
+      font-family: 'Fredoka One', 'Nunito', sans-serif;
+    }
+
+    .scene-instruction-box img {
+      position: absolute;
+      left: -250px;
+      top: -133px;
+      width: 820px;
+      height: 472px;
+      max-width: none;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .scene-instruction-text {
+      position: absolute;
+      left: 24px;
+      top: 23px;
+      width: 278px;
+      color: #050505;
+      font-size: 20px;
+      line-height: 1.1;
+      text-align: center;
+      letter-spacing: 0;
+      text-shadow: 0 1px 0 rgba(255, 255, 255, .55);
+    }
+
+    .scene-instruction-text .blue-word {
+      color: #1777e8;
     }
 
     .flipbook-viewport .shadow {
@@ -6126,7 +6138,7 @@
         { image: "media/13DidSomeoneCallGOGo.jpg",                           audio: "audios/DidSomeoneCallGOGO.mp3" },
         { image: "media/14TheGardenIsSooMesssy.jpg",                         audio: "audios/GogoWithGardenIsSoMessy.mp3" },
         { image: "media/15DidYouDropAllTheseBoxes.jpg",                      audio: "audios/DiduDropAlltheseBoxes.mp3" },
-        { video: "media/16.mp4",                                             postAudio: "audios/Umm… I was flying… then IgotsleepyandthenBOOM!Icrashed.mp3" },
+        { video: "media/16.mp4",                                             muteVideo: true, videoAudio: "audios/Umm… I was flying… then IgotsleepyandthenBOOM!Icrashed.mp3" },
         { image: "media/17ItisOkayGogo.jpg",                                 audio: "audios/ItisOkayGogo.mp3" },
         { image: "media/18ButGuestsAreComingSoon.jpg",                       audio: "audios/ButTheGuestsAreComingSoon.mp3" },
         { image: "media/19WeNeedToMoveThemFast.jpg",                         audio: "audios/WeNeedToMoveThemFast.mp3" },
@@ -6229,7 +6241,7 @@
 
         if (page.video) {
           var vid = document.createElement('video');
-          vid.muted = false;
+          vid.muted = !!page.muteVideo;
           vid.setAttribute('playsinline', '');
           vid.setAttribute('preload', 'auto');
           var $vid = $(vid).css({
@@ -6865,8 +6877,13 @@
               var vid = $('#flipbook .page[data-si="' + curSpread + '"] video').get(0);
               if (vid) {
                 try { vid.currentTime = 0; } catch (ex) {}
-                vid.muted = false;
+                vid.muted = !!scene.muteVideo;
                 vid.play().catch(function () {});
+                if (scene.videoAudio) {
+                  var videoAudio = new Audio(scene.videoAudio);
+                  window.__currentSceneAudio = videoAudio;
+                  videoAudio.play().catch(function () {});
+                }
                 vid.onended = function () {
                   vid.onended = null;
                   if (scene.postAudio) {
