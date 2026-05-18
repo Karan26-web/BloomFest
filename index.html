@@ -14,8 +14,13 @@
       position: absolute;
       top: var(--book-top-gap, 5vh) !important;
       left: 50%;
+      z-index: 2;
       transform: translateX(-50%) scale(var(--book-scale, 1));
       transform-origin: top center;
+    }
+
+    #themeDecor {
+      z-index: 0 !important;
     }
 
     /* ── Preloader ── */
@@ -258,135 +263,6 @@
       backface-visibility: hidden;
     }
 
-    /* Glossy lighting only on the triangular turning corner. */
-    .flipbook-viewport .page::before {
-      content: "";
-      position: absolute;
-      width: 172px;
-      height: 172px;
-      pointer-events: none;
-      z-index: 999;
-      opacity: 0;
-      background:
-        radial-gradient(circle at var(--flip-corner-x, 100%) var(--flip-corner-y, 100%),
-          rgba(255, 255, 255, .98) 0%,
-          rgba(255, 249, 178, .62) 28%,
-          rgba(255, 255, 255, .34) 50%,
-          rgba(255, 255, 255, 0) 72%),
-        linear-gradient(
-          var(--flip-light-angle, 315deg),
-          rgba(255, 255, 255, 0) 0%,
-          rgba(255, 255, 255, .35) 34%,
-          rgba(255, 255, 255, .92) 52%,
-          rgba(255, 246, 178, .34) 70%,
-          rgba(255, 255, 255, 0) 100%
-        );
-      filter: blur(1.2px) drop-shadow(0 0 14px rgba(255, 255, 255, .85));
-      mix-blend-mode: screen;
-      transition: opacity .12s ease;
-    }
-
-    .flipbook-viewport .page.flip-highlight::before {
-      opacity: .96;
-      animation: cornerTurnGlow .68s ease-out both;
-    }
-
-    /* Soft fold shadow, also clipped to the same triangular corner only. */
-    .flipbook-viewport .page::after {
-      content: "";
-      position: absolute;
-      width: 172px;
-      height: 172px;
-      pointer-events: none;
-      opacity: 0;
-      z-index: 998;
-      background:
-        radial-gradient(circle at var(--flip-corner-x, 100%) var(--flip-corner-y, 100%),
-          rgba(0, 0, 0, .30) 0%,
-          rgba(0, 0, 0, .12) 34%,
-          rgba(0, 0, 0, 0) 74%);
-      transition: opacity .18s ease;
-    }
-
-    .flipbook-viewport .page.flip-shadow::after {
-      opacity: .55;
-    }
-
-    .flipbook-viewport .page.flip-highlight,
-    .flipbook-viewport .page.flip-shadow {
-      --flip-corner-x: 100%;
-      --flip-corner-y: 100%;
-      --flip-light-angle: 315deg;
-      --flip-corner-origin: 100% 100%;
-    }
-
-    .flipbook-viewport .page.flip-right.flip-corner-bottom::before,
-    .flipbook-viewport .page.flip-right.flip-corner-bottom::after {
-      right: 0;
-      bottom: 0;
-      clip-path: polygon(100% 0, 100% 100%, 0 100%);
-    }
-
-    .flipbook-viewport .page.flip-right.flip-corner-top {
-      --flip-corner-y: 0%;
-      --flip-light-angle: 225deg;
-      --flip-corner-origin: 100% 0%;
-    }
-
-    .flipbook-viewport .page.flip-right.flip-corner-top::before,
-    .flipbook-viewport .page.flip-right.flip-corner-top::after {
-      right: 0;
-      top: 0;
-      clip-path: polygon(0 0, 100% 0, 100% 100%);
-    }
-
-    .flipbook-viewport .page.flip-left.flip-corner-bottom {
-      --flip-corner-x: 0%;
-      --flip-light-angle: 45deg;
-      --flip-corner-origin: 0% 100%;
-    }
-
-    .flipbook-viewport .page.flip-left.flip-corner-bottom::before,
-    .flipbook-viewport .page.flip-left.flip-corner-bottom::after {
-      left: 0;
-      bottom: 0;
-      clip-path: polygon(0 0, 100% 100%, 0 100%);
-    }
-
-    .flipbook-viewport .page.flip-left.flip-corner-top {
-      --flip-corner-x: 0%;
-      --flip-corner-y: 0%;
-      --flip-light-angle: 135deg;
-      --flip-corner-origin: 0% 0%;
-    }
-
-    .flipbook-viewport .page.flip-left.flip-corner-top::before,
-    .flipbook-viewport .page.flip-left.flip-corner-top::after {
-      left: 0;
-      top: 0;
-      clip-path: polygon(0 0, 100% 0, 0 100%);
-    }
-
-    @keyframes cornerTurnGlow {
-      0% {
-        opacity: .98;
-        transform: scale(.72);
-        transform-origin: var(--flip-corner-origin, 100% 100%);
-      }
-
-      55% {
-        opacity: .98;
-        transform: scale(1);
-        transform-origin: var(--flip-corner-origin, 100% 100%);
-      }
-
-      100% {
-        opacity: .45;
-        transform: scale(.9);
-        transform-origin: var(--flip-corner-origin, 100% 100%);
-      }
-    }
-
     /* Make the back face of a turning page mirror the same artwork (no white/purple flash).
                turn.js renders the folded leaf inside .turn-page-wrapper and uses ::after as the back face.
                We apply the current page's artwork to that back face via a CSS variable set in JS. */
@@ -425,8 +301,7 @@
       width: 18px;
       height: 100%;
 
-      cursor: pointer;
-      /* clickable to go back */
+      pointer-events: none;
       background: linear-gradient(to right,
           rgba(0, 0, 0, 0.35) 0%,
           rgba(0, 0, 0, 0.22) 40%,
@@ -465,6 +340,10 @@
       animation: cornerTease 2.8s ease-in-out forwards;
     }
 
+    .page-turn-hint.hide {
+      display: none;
+    }
+
     @keyframes cornerTease {
       0%   { transform: scale(0);    opacity: 0; }
       18%  { transform: scale(1);    opacity: 1; }
@@ -474,19 +353,37 @@
       100% { transform: scale(0);    opacity: 0; }
     }
 
-    .page-next-zone {
+    .page-corner-zone {
       position: absolute;
-      top: 0;
-      right: 0;
-      width: 70px;
-      height: 100%;
+      width: clamp(72px, 12%, 112px);
+      height: clamp(72px, 20%, 112px);
       z-index: 9997;
       cursor: pointer;
       touch-action: manipulation;
       background: transparent;
     }
 
-    .page-next-zone::after {
+    .page-corner-zone.tl {
+      top: 0;
+      left: 0;
+    }
+
+    .page-corner-zone.tr {
+      top: 0;
+      right: 0;
+    }
+
+    .page-corner-zone.bl {
+      bottom: 0;
+      left: 0;
+    }
+
+    .page-corner-zone.br {
+      bottom: 0;
+      right: 0;
+    }
+
+    .page-corner-zone.br::after {
       content: '';
       position: absolute;
       right: 0;
@@ -501,12 +398,12 @@
       pointer-events: none;
     }
 
-    .page-next-zone:hover::after {
+    .page-corner-zone.br:hover::after {
       opacity: .62;
       transform: scale(1);
     }
 
-    .page-next-zone.hide {
+    .page-corner-zone.hide {
       display: none;
     }
 
@@ -6468,44 +6365,29 @@
       });
 
       var book = $('#flipbook');
-      var flipLightClasses = 'flip-highlight flip-left flip-right flip-shadow flip-corner-top flip-corner-bottom';
-
-      book.bind('start', function (event, pageObject, corner) {
-        $('.page').removeClass(flipLightClasses);
-
-        var view = book.turn('view');
-        var cornerName = corner || 'br';
-        var isLeftTurn = cornerName === 'l' || /l$/.test(cornerName);
-        var isTopCorner = /^t/.test(cornerName);
-        var turnClass = isLeftTurn ? 'flip-left' : 'flip-right';
-        var cornerClass = isTopCorner ? 'flip-corner-top' : 'flip-corner-bottom';
-
-        $.each(view, function (_, pageNum) {
-          var pageEl = $('.page-wrapper[page="' + pageNum + '"] .page');
-          if (!pageEl.length) return;
-          pageEl.addClass('flip-highlight flip-shadow ' + turnClass + ' ' + cornerClass);
-        });
-
-        $(event.target)
-          .closest('.page')
-          .addClass('flip-highlight flip-shadow ' + turnClass + ' ' + cornerClass);
-      });
-
-      book.bind('turned end', function () {
-        $('.page').removeClass(flipLightClasses);
-      });
 
       /* Corner-peel page-turn hint — inactivity-based, from reference implementation */
       var $cornerHint = $('<div class="page-turn-hint"></div>');
-      var $nextZone = $('<div class="page-next-zone" aria-label="Next page" role="button" tabindex="0"></div>');
+      var $cornerZones = $(
+        '<div class="page-corner-zone tl" data-dir="previous" aria-label="Previous page from top-left corner" role="button" tabindex="0"></div>' +
+        '<div class="page-corner-zone tr" data-dir="next" aria-label="Next page from top-right corner" role="button" tabindex="0"></div>' +
+        '<div class="page-corner-zone bl" data-dir="previous" aria-label="Previous page from bottom-left corner" role="button" tabindex="0"></div>' +
+        '<div class="page-corner-zone br" data-dir="next" aria-label="Next page from bottom-right corner" role="button" tabindex="0"></div>'
+      );
       $('.flipbook-viewport').append($cornerHint);
-      $('.flipbook-viewport').append($nextZone);
+      $('.flipbook-viewport').append($cornerZones);
+      var $prevZones = $cornerZones.filter('[data-dir="previous"]');
+      var $nextZones = $cornerZones.filter('[data-dir="next"]');
 
       var _hintTimer = null, _hintPlaying = false;
       var HINT_DELAY = 3000, HINT_DUR = 2800;
 
       function _isLastPage() {
         try { return $('#flipbook').turn('page') >= STORY.pages.length + 2 - 1; } catch(e) { return false; }
+      }
+
+      function _isFirstPage() {
+        try { return $('#flipbook').turn('page') <= 2; } catch(e) { return true; }
       }
 
       function _playHint() {
@@ -6530,10 +6412,16 @@
 
       function _updateNextZone() {
         try {
-          var cur = $('#flipbook').turn('page');
-          var lastPage = STORY.pages.length + 2;
-          if (cur >= lastPage - 1) { $nextZone.addClass('hide'); }
-          else { $nextZone.removeClass('hide'); }
+          if (_isLastPage()) {
+            $nextZones.addClass('hide');
+            $cornerHint.addClass('hide').removeClass('active');
+          } else {
+            $nextZones.removeClass('hide');
+            $cornerHint.removeClass('hide');
+          }
+
+          if (_isFirstPage()) { $prevZones.addClass('hide'); }
+          else { $prevZones.removeClass('hide'); }
         } catch(e) {}
       }
       setTimeout(_updateNextZone, 1200);
@@ -6541,6 +6429,7 @@
 
       /* Jump to page 2 (first real spread) without animation */
       $('#flipbook').turn('page', 2);
+      _updateNextZone();
       updateCounter(2);
       buildOverlay(0);
       setTimeout(function () { startSeq(0); }, 400);
@@ -6548,31 +6437,21 @@
 
       /* Audio for scene 0 is handled by the turned event fired above */
 
-      /* Click/tap left binding to go to previous page (mouse + touch + pointer) */
-      var spineHandled = false;
-      $('.book-spine').on('pointerdown mousedown touchstart', function (e) {
-        if (spineHandled) return;
-        spineHandled = true;
-        setTimeout(function () { spineHandled = false; }, 300);
-        e.preventDefault();
-        $('#flipbook').turn('previous');
-      });
-
-      /* Right edge: media/html pages can swallow the native turn.js gesture, so
-         this narrow edge target reliably starts the same animated turn. */
-      var nextHandled = false;
-      function goNextFromEdge(e) {
-        if (nextHandled) return;
-        nextHandled = true;
-        setTimeout(function () { nextHandled = false; }, 320);
+      /* Four corner targets: left corners go back, right corners go forward. */
+      var cornerHandled = false;
+      function turnFromCorner(e) {
+        if (cornerHandled) return;
+        cornerHandled = true;
+        setTimeout(function () { cornerHandled = false; }, 320);
         e.preventDefault();
         e.stopPropagation();
-        try { $('#flipbook').turn('next'); } catch (err) { }
+        var dir = $(this).data('dir');
+        try { book.turn(dir === 'previous' ? 'previous' : 'next'); } catch (err) { }
       }
-      $nextZone.on('pointerdown mousedown touchstart', goNextFromEdge);
-      $nextZone.on('keydown', function (e) {
+      $cornerZones.on('pointerdown mousedown touchstart', turnFromCorner);
+      $cornerZones.on('keydown', function (e) {
         if (e.key !== 'Enter' && e.key !== ' ') return;
-        goNextFromEdge(e);
+        turnFromCorner.call(this, e);
       });
     }
 
