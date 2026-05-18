@@ -581,7 +581,7 @@
     }
 
     .balloon-float-scene.is-balloon-active .balloon-float-img {
-      animation: balloonFloatAway 13s cubic-bezier(.27, .05, .12, 1) forwards;
+      animation: balloonFloatAway 6.8s linear forwards;
     }
 
     @keyframes balloonFloatAway {
@@ -591,31 +591,21 @@
         transform: translate3d(-5%, 1.5%, 0) scale(.58) rotate(0deg);
       }
 
-      24% {
+      34% {
         opacity: 1;
-        transform: translate3d(-3.8%, -7.5%, 0) scale(.5) rotate(-.6deg);
+        transform: translate3d(-3.4%, -13%, 0) scale(.45) rotate(-.45deg);
       }
 
-      52% {
+      68% {
         opacity: 1;
         filter: drop-shadow(0 9px 8px rgba(75, 48, 0, .1));
-        transform: translate3d(-2.1%, -19%, 0) scale(.36) rotate(.7deg);
-      }
-
-      84% {
-        opacity: 1;
-        transform: translate3d(-.7%, -30%, 0) scale(.24) rotate(-.4deg);
-      }
-
-      94% {
-        opacity: .68;
-        transform: translate3d(-.2%, -35%, 0) scale(.19) rotate(.15deg);
+        transform: translate3d(-1.6%, -28%, 0) scale(.28) rotate(.45deg);
       }
 
       100% {
         opacity: 0;
         filter: drop-shadow(0 0 0 rgba(75, 48, 0, 0));
-        transform: translate3d(0, -39%, 0) scale(.14) rotate(.2deg);
+        transform: translate3d(0, -46%, 0) scale(.12) rotate(.15deg);
       }
     }
 
