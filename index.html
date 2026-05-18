@@ -346,6 +346,24 @@
       display: none;
     }
 
+    .after-audio-video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      z-index: 12;
+      opacity: 0;
+      pointer-events: none;
+      background: #000;
+      transition: opacity .24s ease;
+    }
+
+    .after-audio-video.is-playing {
+      opacity: 1;
+    }
+
     @keyframes magicSparkleTwinkle {
       0%,
       100% {
@@ -6029,8 +6047,7 @@
         { image: "media/8kabir!itisTooHeavyForus.jpg",                       audio: "audios/KabirItisTooHeavyForUs.mp3" },
         { image: "media/9WeNeedHelp.jpg",                                    audio: "audios/WeNeedHelp.mp3" },
         { image: "media/10LetUsCallGogo.jpg",                                audio: "audios/LetUsCallGOGO.mp3" },
-        { image: "media/11TwinkleTwinkleMagicLIght.jpg",                     audio: "audios/TwinkleTwingleMagiclightBriggogoToSight.mp3", sparkles: true },
-        { video: "media/12.mp4",                                             postAudio: "audios/Umm… I was flying… then IgotsleepyandthenBOOM!Icrashed.mp3" },
+        { image: "media/11TwinkleTwinkleMagicLIght.jpg",                     audio: "audios/TwinkleTwingleMagiclightBriggogoToSight.mp3", sparkles: true, afterAudioVideo: "media/12.mp4", autoNextAfterVideo: true },
         { image: "media/13DidSomeoneCallGOGo.jpg",                           audio: "audios/DidSomeoneCallGOGO.mp3" },
         { image: "media/14TheGardenIsSooMesssy.jpg",                         audio: "audios/GogoWithGardenIsSoMessy.mp3" },
         { image: "media/15DidYouDropAllTheseBoxes.jpg",                      audio: "audios/DiduDropAlltheseBoxes.mp3" },
@@ -6138,7 +6155,7 @@
             top: 0,
             left: 0
           });
-          $vid.addClass('spread-video').attr('data-spread', i).attr('data-side', 'left');
+          $vid.addClass('spread-video').attr('data-spread', i).attr('data-side', 'left').attr('data-video-src', page.video);
           $p.css({ position: 'relative', overflow: 'hidden' }).append($vid);
         } else if (page.html) {
           /* HTML page: supports either a URL (loaded via <iframe>) or an inline HTML string */
@@ -6192,6 +6209,19 @@
 
         if (page.sparkles) {
           $p.append(buildMagicSparkles());
+        }
+
+        if (page.afterAudioVideo) {
+          var afterVid = document.createElement('video');
+          afterVid.muted = false;
+          afterVid.setAttribute('playsinline', '');
+          afterVid.setAttribute('preload', 'auto');
+          var $afterVid = $(afterVid)
+            .addClass('spread-video after-audio-video')
+            .attr('data-spread', i)
+            .attr('data-side', 'after-audio')
+            .attr('data-video-src', page.afterAudioVideo);
+          $p.css({ position: 'relative', overflow: 'hidden' }).append($afterVid);
         }
 
         if (page.wagonRide) {
@@ -6368,6 +6398,38 @@
       void $page[0].offsetWidth;
       if (scene.wagonRide) $page.addClass('is-wagon-active');
       if (scene.balloonFloat) $page.addClass('is-balloon-active');
+    }
+
+    function playAfterAudioVideo(si, scene) {
+      if (si !== curSpread || !scene || !scene.afterAudioVideo) return;
+      var vid = $('#flipbook .page[data-si="' + si + '"] video.after-audio-video').get(0);
+      if (!vid) return;
+
+      try {
+        vid.pause();
+        vid.currentTime = 0;
+      } catch (e) { }
+
+      vid.muted = false;
+      $(vid).addClass('is-playing');
+      window.__currentSceneVideo = vid;
+      vid.onended = function () {
+        vid.onended = null;
+        $(vid).removeClass('is-playing');
+        if (window.__currentSceneVideo === vid) window.__currentSceneVideo = null;
+        if (scene.autoNextAfterVideo && si === curSpread) {
+          setTimeout(function () {
+            if (si === curSpread) {
+              try { $('#flipbook').turn('next'); } catch (e) { }
+            }
+          }, 420);
+        }
+      };
+
+      var p = vid.play();
+      if (p && p.catch) p.catch(function () {
+        $(vid).removeClass('is-playing');
+      });
     }
 
     /* ── Balloons ── */
@@ -6672,10 +6734,18 @@
             $('.confetti-container').remove();
             $('.wagon-ride-scene').removeClass('is-wagon-active');
             $('.balloon-float-scene').removeClass('is-balloon-active');
+            $('.after-audio-video').removeClass('is-playing');
             /* Stop scene audio on page change */
             if (window.__currentSceneAudio) {
               try { window.__currentSceneAudio.pause(); window.__currentSceneAudio.src = ''; } catch (e) { }
               window.__currentSceneAudio = null;
+            }
+            if (window.__currentSceneVideo) {
+              try {
+                window.__currentSceneVideo.pause();
+                window.__currentSceneVideo.currentTime = 0;
+              } catch (e) { }
+              window.__currentSceneVideo = null;
             }
             /* Pause all videos and clear sync intervals */
             $('#flipbook video').each(function () {
@@ -6708,9 +6778,22 @@
                 };
               }
             } else if (scene.audio) {
+              var audioSpread = curSpread;
               var a = new Audio(scene.audio);
               window.__currentSceneAudio = a;
-              a.play().catch(function () {});
+              if (scene.afterAudioVideo) {
+                a.addEventListener('ended', function () {
+                  if (window.__currentSceneAudio === a) {
+                    window.__currentSceneAudio = null;
+                    playAfterAudioVideo(audioSpread, scene);
+                  }
+                });
+              }
+              a.play().catch(function () {
+                if (scene.afterAudioVideo) {
+                  setTimeout(function () { playAfterAudioVideo(audioSpread, scene); }, 900);
+                }
+              });
             }
           }
         }
@@ -6810,7 +6893,10 @@
     /* ── Preload all videos, then show Start button ── */
     function preloadAllVideos(callback) {
       var videoUrls = [];
-      STORY.pages.forEach(function (p) { if (p.video) videoUrls.push(p.video); });
+      STORY.pages.forEach(function (p) {
+        if (p.video) videoUrls.push(p.video);
+        if (p.afterAudioVideo) videoUrls.push(p.afterAudioVideo);
+      });
       var unique = videoUrls.filter(function (v, i, a) { return a.indexOf(v) === i; });
       if (unique.length === 0) { showStartButton(callback); return; }
 
@@ -6837,8 +6923,9 @@
         allVids.forEach(function (vid) {
           var si = parseInt(vid.getAttribute('data-spread'));
           var page = STORY.pages[si];
-          if (page && page.video) {
-            vid.src = preloadedVideos[page.video] || page.video;
+          var src = vid.getAttribute('data-video-src') || (page && page.video);
+          if (src) {
+            vid.src = preloadedVideos[src] || src;
           }
         });
 
