@@ -288,6 +288,82 @@
         inset 6px 0 12px -8px rgba(0, 0, 0, 0.10);
     }
 
+    .magic-sparkle-layer {
+      position: absolute;
+      inset: 0;
+      z-index: 8;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .magic-sparkle {
+      position: absolute;
+      left: var(--x);
+      top: var(--y);
+      width: var(--s);
+      height: var(--s);
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.55) rotate(0deg);
+      animation: magicSparkleTwinkle var(--d) ease-in-out infinite;
+      animation-delay: var(--delay);
+      filter:
+        drop-shadow(0 0 5px var(--glow))
+        drop-shadow(0 0 13px var(--glow));
+    }
+
+    .magic-sparkle::before,
+    .magic-sparkle::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      background: var(--color);
+      border-radius: 999px;
+    }
+
+    .magic-sparkle::before {
+      width: 100%;
+      height: 18%;
+      top: 41%;
+    }
+
+    .magic-sparkle::after {
+      width: 18%;
+      height: 100%;
+      left: 41%;
+    }
+
+    .magic-sparkle.dot {
+      border-radius: 999px;
+      background: radial-gradient(circle, var(--color) 0 28%, var(--glow) 42%, transparent 72%);
+      filter:
+        drop-shadow(0 0 4px var(--glow))
+        drop-shadow(0 0 10px var(--glow));
+    }
+
+    .magic-sparkle.dot::before,
+    .magic-sparkle.dot::after {
+      display: none;
+    }
+
+    @keyframes magicSparkleTwinkle {
+      0%,
+      100% {
+        opacity: .12;
+        transform: translate(-50%, -50%) scale(.45) rotate(0deg);
+      }
+
+      42% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1.18) rotate(35deg);
+      }
+
+      62% {
+        opacity: .34;
+        transform: translate(-50%, -50%) scale(.72) rotate(65deg);
+      }
+    }
+
     .flipbook-viewport .shadow {
       transition: box-shadow .5s;
       box-shadow: 0 0 20px #bbb
@@ -5757,7 +5833,7 @@
         { image: "media/8kabir!itisTooHeavyForus.jpg",                       audio: "audios/KabirItisTooHeavyForUs.mp3" },
         { image: "media/9WeNeedHelp.jpg",                                    audio: "audios/WeNeedHelp.mp3" },
         { image: "media/10LetUsCallGogo.jpg",                                audio: "audios/LetUsCallGOGO.mp3" },
-        { image: "media/11TwinkleTwinkleMagicLIght.jpg",                     audio: "audios/TwinkleTwingleMagiclightBriggogoToSight.mp3" },
+        { image: "media/11TwinkleTwinkleMagicLIght.jpg",                     audio: "audios/TwinkleTwingleMagiclightBriggogoToSight.mp3", sparkles: true },
         { video: "media/12.mp4",                                             postAudio: "audios/Umm… I was flying… then IgotsleepyandthenBOOM!Icrashed.mp3" },
         { image: "media/13DidSomeoneCallGOGo.jpg",                           audio: "audios/DidSomeoneCallGOGO.mp3" },
         { image: "media/14TheGardenIsSooMesssy.jpg",                         audio: "audios/GogoWithGardenIsSoMessy.mp3" },
@@ -5791,6 +5867,41 @@
     */
     /* Store preloaded video blobs for instant playback */
     var preloadedVideos = {};
+
+    function buildMagicSparkles() {
+      var colors = [
+        { color: '#ffffff', glow: 'rgba(255,255,255,.95)' },
+        { color: '#fff45c', glow: 'rgba(255,237,70,.9)' },
+        { color: '#70ff38', glow: 'rgba(112,255,56,.82)' },
+        { color: '#52a8ff', glow: 'rgba(82,168,255,.9)' }
+      ];
+      var points = [
+        [4, 66, 14], [8, 42, 9], [12, 72, 7], [16, 34, 5], [20, 56, 10], [24, 40, 5],
+        [28, 76, 6], [31, 49, 12], [35, 30, 5], [39, 62, 7], [43, 45, 13], [47, 58, 6],
+        [51, 36, 5], [55, 72, 8], [59, 48, 10], [63, 63, 6], [67, 38, 14], [71, 52, 6],
+        [75, 77, 9], [79, 43, 5], [83, 60, 12], [87, 35, 6], [91, 70, 8], [95, 51, 5],
+        [7, 83, 11], [18, 84, 6], [32, 18, 5], [46, 86, 7], [58, 28, 5], [70, 84, 6],
+        [88, 82, 7], [94, 87, 5], [14, 24, 5], [38, 22, 4], [53, 23, 5], [72, 25, 4],
+        [86, 24, 5], [22, 67, 5], [36, 55, 4], [62, 81, 5], [77, 67, 4], [90, 58, 5]
+      ];
+      var html = '<div class="magic-sparkle-layer" aria-hidden="true">';
+      points.forEach(function (p, i) {
+        var c = colors[i % colors.length];
+        var isDot = i % 3 === 1;
+        var dur = (1.25 + (i % 7) * 0.17).toFixed(2) + 's';
+        var delay = (-0.18 * (i % 13)).toFixed(2) + 's';
+        html += '<i class="magic-sparkle' + (isDot ? ' dot' : '') + '" style="'
+          + '--x:' + p[0] + '%;'
+          + '--y:' + p[1] + '%;'
+          + '--s:' + p[2] + 'px;'
+          + '--d:' + dur + ';'
+          + '--delay:' + delay + ';'
+          + '--color:' + c.color + ';'
+          + '--glow:' + c.glow + ';'
+          + '"></i>';
+      });
+      return html + '</div>';
+    }
 
     (function () {
       var $fb = $('#flipbook');
@@ -5865,6 +5976,10 @@
           var cs2 = getComputedStyle(document.documentElement);
           var bgC = cs2.getPropertyValue('--theme-bg').trim() || '#3DBCD4';
           $p.css('background', bgC);
+        }
+
+        if (page.sparkles) {
+          $p.append(buildMagicSparkles());
         }
 
         $fb.append($p);
